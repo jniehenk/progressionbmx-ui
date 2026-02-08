@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Progression BMX Timing</title>
+
+  <style>
+    :root {
+      --bg: #0b1624;
+      --text-primary: #ffffff;
+      --text-secondary: #9fb2c8;
+      --accent: #6bbf59;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      height: 100vh;
+      background: radial-gradient(circle at top, #12233a, var(--bg));
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 720px;
+    }
+
+    .logo {
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto 2.5rem auto;
+    }
+
+    .launch {
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .date {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    @media (max-width: 600px) {
+      .date {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img
+      src="/launch.png"
+      alt="Progression BMX Timing"
+      class="logo"
+    />
+
+    <div class="launch">Launching</div>
+    <div class="date">Q2 2026</div>
+  </div>
+
+</body>
+</html>
