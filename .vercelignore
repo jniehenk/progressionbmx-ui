@@ -1,0 +1,6 @@
+.local-deps/
+.env*
+__pycache__/
+*.sqlite*
+historical_preview/local_store.py
+historical_preview/dev_server.py
