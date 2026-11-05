@@ -9,6 +9,18 @@ class NoRedirect(HTTPRedirectHandler):
 class GatewayError(Exception):
     def __init__(self,status,code):self.status=status;self.code=code
 
+def rejection_category(error):
+    """Inspect a bounded error in memory; return fixed categories, never content."""
+    try:
+        if error.headers.get('cf-mitigated','').lower()=='challenge':return 'EDGE_CHALLENGE_MARKER'
+        sample=error.read(32768).lower()
+        if b'cloudflare access' in sample:return 'ACCESS_PAGE_MARKER'
+        if b'error code: 1010' in sample or b'error code:1010' in sample:return 'EDGE_INTEGRITY_MARKER'
+        if b'cf-error-details' in sample or b'attention required!' in sample:return 'EDGE_SECURITY_PAGE_MARKER'
+        if b'invalid token' in sample or b'failed to validate' in sample:return 'TOKEN_VALIDATION_MARKER'
+    except Exception:pass
+    return 'UNCLASSIFIED'
+
 def prepare(method,url,body,headers,env):
     base=env.get('PBMX_TRACK_API_ORIGIN','');u=urlsplit(base)
     required=('PBMX_TRACK_API_SECRET','CF_ACCESS_CLIENT_ID','CF_ACCESS_CLIENT_SECRET')
@@ -34,7 +46,7 @@ def prepare(method,url,body,headers,env):
             try:datetime.date.fromisoformat(q[k][0])
             except ValueError:raise GatewayError(400,'DATE_RANGE')
     correlation=uuid.uuid4().hex
-    outbound={'Authorization':'Bearer '+env['PBMX_TRACK_API_SECRET'],'CF-Access-Client-Id':env['CF_ACCESS_CLIENT_ID'],'CF-Access-Client-Secret':env['CF_ACCESS_CLIENT_SECRET'],'X-Request-ID':correlation,'Content-Type':'application/json'}
+    outbound={'Authorization':'Bearer '+env['PBMX_TRACK_API_SECRET'],'CF-Access-Client-Id':env['CF_ACCESS_CLIENT_ID'],'CF-Access-Client-Secret':env['CF_ACCESS_CLIENT_SECRET'],'X-Request-ID':correlation,'Content-Type':'application/json','Accept':'application/json','User-Agent':'ProgressionBMXGateway/1.0'}
     data=None
     if 'registration' in resource:
         identity=headers.get('Authorization','')
@@ -62,7 +74,10 @@ def forward(method,url,body,headers,env=None,opener=None):
             return 200,json.loads(raw),correlation
     except GatewayError as e:return e.status,{'error':e.code},correlation
     except HTTPError as e:
-        code=e.code;e.close()
+        code=e.code
+        category=rejection_category(e) if code in (401,403) else 'HTTP_REJECTION'
+        e.close()
+        print(json.dumps({'event':'TRACK_UPSTREAM_REJECTED','status':code,'category':category,'request_id':correlation}),flush=True)
         return (code if code in (400,401,403,404,409,413,422,429,503,504) else 502),{'error':'TRACK_REQUEST_REJECTED' if code<500 else 'TRACK_UNAVAILABLE'},correlation
     except Exception:return 503,{'error':'TRACK_UNAVAILABLE'},correlation
 class handler(BaseHTTPRequestHandler):
