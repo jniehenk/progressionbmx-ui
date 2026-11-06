@@ -11,7 +11,9 @@ function freshness(text){let p=document.getElementById('syncFreshness');if(!p){p
 
 const classes = {FULL_LAP:'Full lap', HALF_TRACK:'Half-track', RHYTHM:'Rhythm', OTHER:'Other'};
 const starts = {GATE:'Gate start', ROLLING:'Rolling start', UNKNOWN:'Unknown start', SECTION_ONLY:'Unknown start'};
-const metrics=[['FULL_LAP_ELAPSED','Full track elapsed'],['HALF_TRACK_ELAPSED','Half track elapsed'],['RHYTHM_SECTION_SPLIT','Rhythm elapsed'],['START_30FT',"30′ elapsed"],['STRAIGHT1_ELAPSED','First straight elapsed']];
+const metrics=[['START_30FT','Start Hill Elapsed'],['STRAIGHT1_ELAPSED','1st Straight Elapsed'],['FULL_LAP_ELAPSED','Finish'],['RHYTHM_SECTION_SPLIT','Rhythm Section Elapsed']];
+const metricLabels=Object.fromEntries(metrics);
+function displayLabel(split){return metricLabels[split.id]||split.label;}
 function pacificTime(value){
   if(typeof value!=='string'||!value)return {day:null,time:'Time unavailable'};
   const stamp=new Date(value);
@@ -53,7 +55,7 @@ function options(select, values, selected) {
 function splitGroup(run, kind, title) {
   const group = node('div','split-group '+kind);group.append(node('h4','',title));
   for (const split of run.splits.filter(s=>s.kind === kind)) {
-    const row = node('div','split-row'); row.dataset.splitId=split.id; const label = node('span','split-label',split.label);
+    const row = node('div','split-row'); row.dataset.splitId=split.id; const label = node('span','split-label',displayLabel(split));
     row.append(label,node('span','split-value',split.seconds + (split.milliseconds === null ? '' : ' s')));group.append(row);
   }
   return group;
@@ -65,7 +67,7 @@ function card(run) {
   top.append(node('span','run-kind',(classes[run.classification] || run.classification).toUpperCase()),clock);
   content.append(top,node('h3','',run.alias_label),node('p','recorded-day','Date: '+dateLabel(run.day)));
   const duration = node('div','duration-block'); const metric = node('div','');
-  metric.append(node('p','duration-label',run.duration ? run.duration.label : 'Applicable duration unavailable'));
+  metric.append(node('p','duration-label',run.duration ? displayLabel(run.duration) : 'Applicable duration unavailable'));
   const value = node('div','duration-value',run.duration ? run.duration.seconds : '—');
   if (run.duration && run.duration.milliseconds !== null) value.append(node('span','unit','seconds'));
   metric.append(value); duration.append(metric,node('span','start-tag',starts[run.start_mode] || 'Unknown start'));
@@ -82,7 +84,7 @@ function card(run) {
   technical.append(node('summary','','Technical details'),
     node('p','','Recorded anchor: '+run.anchor+' · Start mode: '+run.start_mode+' · Revision '+run.revision));
   const codes=node('dl','technical-splits');
-  for(const split of run.splits) codes.append(node('dt','',split.label),node('dd','canonical',split.id));
+  for(const split of run.splits) codes.append(node('dt','',displayLabel(split)),node('dd','canonical',split.id==='START_30FT'?'START_HILL':split.id));
   technical.append(codes);body.append(technical);
   details.append(summary,body);article.append(details);return article;
 }
@@ -135,8 +137,8 @@ async function load(quiet=false,more=false) {
     if(quiet&&dataset&&JSON.stringify(dataset.runs.map(({day,timeRecorded,...r})=>r))===JSON.stringify(next.runs))return;
     if(quiet){previous.rider=$('rider').value;previous.date=$('date').value;}
     dataset = next;
-    if(publicMode){document.querySelector('.hero h1').textContent=next.profile.name;document.querySelector('.notice strong').textContent=next.notice;document.querySelector('footer > p').textContent=next.notice;$('scope').textContent=next.dataset_label;const loadMore=$('loadMore');if(loadMore)loadMore.hidden=dataset.runs.length>=dataset.total;}
-    if(chipReference){document.querySelector('footer > p').textContent=next.notice;document.querySelector('.hero .eyebrow').textContent='YOUR CHIP TIMING HISTORY';document.querySelector('.hero-count span').textContent='All available dates';document.querySelector('.notice strong').textContent=next.notice;document.querySelector('.historical').textContent='LOCAL TEST / CHIP HISTORY';document.querySelector('.hero h1').textContent='Your chip timing history';document.querySelector('.intro').textContent='All available dates for '+next.chip_identity+'. History follows this chip.';$('scope').textContent=next.dataset_label;document.querySelector('.back-to-riders').textContent='← Back to registration';}
+    if(publicMode){document.querySelector('.hero h1').textContent=next.profile.name;const notice=document.querySelector('.notice strong');if(notice)notice.textContent=next.notice;document.querySelector('footer > p').textContent=next.notice;$('scope').textContent=next.dataset_label;const loadMore=$('loadMore');if(loadMore)loadMore.hidden=dataset.runs.length>=dataset.total;}
+    if(chipReference){document.querySelector('footer > p').textContent=next.notice;document.querySelector('.hero .eyebrow').textContent='YOUR CHIP TIMING HISTORY';document.querySelector('.hero-count span').textContent='All available dates';const notice=document.querySelector('.notice strong');if(notice)notice.textContent=next.notice;document.querySelector('.historical').textContent='LOCAL TEST / CHIP HISTORY';document.querySelector('.hero h1').textContent='Your chip timing history';document.querySelector('.intro').textContent='All available dates for '+next.chip_identity+'. History follows this chip.';$('scope').textContent=next.dataset_label;document.querySelector('.back-to-riders').textContent='← Back to registration';}
 
     dataset.runs=dataset.runs.map(localRun);
     dataset.dates=Array.from(new Set(dataset.runs.map(r=>r.day).filter(Boolean))).sort().reverse();
@@ -170,7 +172,7 @@ for(const a of document.querySelectorAll('a[href="/"]'))a.href=endpoint('/');
 let refreshSeconds=0,refreshTimer=null;
 const refreshLabel=node('label','refresh-options','Updates '),refreshSelect=node('select','');refreshSelect.id='refreshMode';refreshSelect.setAttribute('aria-label','Automatic refresh');
 for(const [seconds,label] of [[0,'Manual'],[10,'Every 10 seconds'],[30,'Every 30 seconds'],[60,'Every minute']]){const option=node('option','',label);option.value=String(seconds);refreshSelect.append(option);}
-refreshLabel.append(refreshSelect);$('refresh').parentNode.after(refreshLabel);
+refreshLabel.append(refreshSelect);if(!publicMode)$('refresh').parentNode.after(refreshLabel);
 function changeRefresh(){refreshSeconds=Number(refreshSelect.value);if(refreshTimer!==null)clearInterval(refreshTimer);if(refreshSeconds>0)refreshTimer=setInterval(()=>{if(!document.hidden)load(true)},refreshSeconds*1000);}
 const requestedRefresh=window.PBMX_REFRESH_SECONDS||0;
 if(Number.isInteger(requestedRefresh)&&requestedRefresh>=1&&requestedRefresh<=300&&!Array.from(refreshSelect.options).some(o=>o.value===String(requestedRefresh))){const option=node('option','', 'Every '+requestedRefresh+' seconds');option.value=String(requestedRefresh);refreshSelect.append(option);}

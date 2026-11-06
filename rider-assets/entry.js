@@ -52,7 +52,7 @@ if(typeof document!=='undefined'){
   let refreshSeconds=0,refreshTimer=null;
   const refreshLabel=element('label','refresh-options','Updates '),refreshSelect=element('select','');refreshSelect.id='refreshMode';refreshSelect.setAttribute('aria-label','Automatic refresh');
   for(const [seconds,label] of [[0,'Manual'],[10,'Every 10 seconds'],[30,'Every 30 seconds'],[60,'Every minute']]){const option=element('option','',label);option.value=String(seconds);refreshSelect.append(option);}
-  refreshLabel.append(refreshSelect);get('directoryCount').parentNode.after(refreshLabel);
+  refreshLabel.append(refreshSelect);if(!publicMode)get('directoryCount').parentNode.after(refreshLabel);
   function changeRefresh(){refreshSeconds=Number(refreshSelect.value);if(refreshTimer!==null)clearInterval(refreshTimer);if(refreshSeconds>0)refreshTimer=setInterval(()=>{if(!document.hidden)loadDirectory(true)},refreshSeconds*1000);}
   const requestedRefresh=window.PBMX_REFRESH_SECONDS||0;
   if(Number.isInteger(requestedRefresh)&&requestedRefresh>=1&&requestedRefresh<=300&&!Array.from(refreshSelect.options).some(o=>o.value===String(requestedRefresh))){const option=element('option','', 'Every '+requestedRefresh+' seconds');option.value=String(requestedRefresh);refreshSelect.append(option);}
