@@ -28,9 +28,13 @@ def prepare(method,url,body,headers,env):
     q=parse_qs(urlsplit(url).query,keep_blank_values=True)
     if any(len(v)!=1 for v in q.values()):raise GatewayError(400,'DUPLICATE_QUERY')
     resource=q.pop('resource',['health'])[0];route=q.pop('profile',[''])[0];reference=q.pop('reference',[''])[0];action=q.pop('action',[''])[0]
-    allowed={('GET','health'),('GET','profiles'),('GET','board'),('GET','results'),('POST','registrations'),('GET','registration'),('POST','registration')}
+    allowed={('GET','health'),('GET','profiles'),('GET','board'),('GET','results'),('GET','riders'),('GET','runs'),('GET','registration-config'),('POST','registrations'),('GET','registration'),('POST','registration')}
     if (method,resource) not in allowed:raise GatewayError(404,'ROUTE_UNAVAILABLE')
-    if set(q)-{'q','offset','limit','start','end'}:raise GatewayError(400,'QUERY_FIELDS')
+    if set(q)-{'q','offset','limit','start','end','letter'}:raise GatewayError(400,'QUERY_FIELDS')
+    if 'letter' in q and not re.fullmatch('[A-Z#]',q['letter'][0]):raise GatewayError(400,'LETTER_REQUIRED')
+    if resource=='runs':
+        if not re.fullmatch('[a-z0-9-]{1,80}',route):raise GatewayError(400,'PROFILE_ROUTE')
+        resource='riders/'+route+'/runs'
     if resource=='results':
         if not re.fullmatch('[a-z0-9-]{1,80}',route):raise GatewayError(400,'PROFILE_ROUTE')
         resource='profiles/'+route+'/results'
@@ -48,7 +52,7 @@ def prepare(method,url,body,headers,env):
     correlation=uuid.uuid4().hex
     outbound={'Authorization':'Bearer '+env['PBMX_TRACK_API_SECRET'],'CF-Access-Client-Id':env['CF_ACCESS_CLIENT_ID'],'CF-Access-Client-Secret':env['CF_ACCESS_CLIENT_SECRET'],'X-Request-ID':correlation,'Content-Type':'application/json','Accept':'application/json','User-Agent':'ProgressionBMXGateway/1.0'}
     data=None
-    if 'registration' in resource:
+    if resource=='registrations' or resource.startswith('registrations/'):
         identity=headers.get('Authorization','')
         if not identity.startswith('Bearer ') or not 1<=len(identity[7:])<=16384:raise GatewayError(401,'RIDER_LOGIN_REQUIRED')
         outbound['X-Rider-Authorization']=identity

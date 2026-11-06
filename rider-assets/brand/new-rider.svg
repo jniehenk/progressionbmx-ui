@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>New rider</title>
+  <circle cx="26" cy="20" r="10" stroke="#0E1A2B" stroke-width="3.5"/>
+  <path d="M7 53v-5c0-10 8-17 19-17 7 0 12 2 15 6" stroke="#0E1A2B" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="47" cy="46" r="14" fill="#66C24F" stroke="#0E1A2B" stroke-width="3"/>
+  <path d="M47 39v14m-7-7h14" stroke="#0E1A2B" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Progression BMX · Your runs</title><link rel="stylesheet" href="/rider-assets/styles.css"><script src="/rider-assets/public-context.js" defer></script><script src="/rider-assets/app.js" defer></script></head>
+<body>
+<header class="topbar"><div class="header-inner"><a class="brand" href="/" aria-label="Progression BMX home"><img class="brand-wide" src="/rider-assets/brand/wide-logo.png" width="1185" height="488" alt="Progression BMX Timing — Built for Growth, Not Just Speed"><img class="brand-compact" src="/rider-assets/brand/mark.png" width="1536" height="1536" alt=""><span class="brand-name compact-name">Progression BMX<span class="brand-sub">Timing</span></span></a><span class="historical"><span></span> HISTORICAL / NOT LIVE</span></div></header>
+<main>
+  <a class="back-to-riders" href="/track.html">← Choose another rider</a>
+  <section class="hero"><div><p class="eyebrow">YOUR HISTORICAL SESSION BOOK</p><h1>Your runs, in detail.</h1><p class="intro">Explore recorded runs and splits.</p></div><p class="hero-count"><strong id="total">—</strong> candidates<br><span>Historical test collection</span></p></section>
+  <aside class="notice" aria-label="Historical data notice"><span class="notice-icon" aria-hidden="true">!</span><div><strong>Newly reprocessed historical data—timing accuracy not independently validated.</strong><p>Highlights show the fastest listed time for each rider, day and start type. They are not official rankings or personal bests.</p></div></aside>
+  <section class="workspace" aria-label="Your historical runs">
+    <div class="section-heading"><div><p class="eyebrow">THE SESSION BOOK</p><h2>Find your runs</h2></div><button id="refresh" class="refresh" type="button">↻ Refresh data</button></div>
+    <div class="filters"><div><label for="rider">RIDER / CHIP ALIAS</label><select id="rider" disabled><option>Loading aliases…</option></select></div><div><label for="date">Date</label><select id="date" disabled><option>Loading dates…</option></select></div></div>
+    <div class="results-heading"><p id="count" aria-live="polite">Loading historical runs…</p><span id="scope">HISTORICAL TEST DATA</span></div>
+    <div id="state" class="state" role="status"><span class="loader" aria-hidden="true"></span><h3>Loading the session book</h3><p>Reading the isolated historical receiver…</p></div>
+    <button id="loadMore" class="refresh" type="button" hidden>Load more runs</button><div id="timingBoxes" class="timing-boxes" aria-label="Times for the day"></div>
+    <details class="all-runs"><summary>All runs and splits</summary><div id="runs" class="run-grid" aria-label="Run results"></div></details>
+  </section>
+  <section class="guide"><div><span class="guide-number">01</span><h3>Elapsed ≠ section time</h3><p>Elapsed values are cumulative from the recorded run anchor. Section times measure individual parts. They overlap, so they should never be added together.</p></div><div><span class="guide-number">02</span><h3>A candidate, not a claim</h3><p>“Completed” describes processing only. Full-lap, half-track and rhythm are inferred classifications, not independently verified performances.</p></div><div><span class="guide-number">03</span><h3>Your identity stays local</h3><p>Demo aliases group recorded chips without showing their identifiers. This page does not verify chip possession or rider registration.</p></div></section>
+</main>
+<footer><div><span class="footer-brand">PROGRESSION BMX</span><p class="tagline">Built for Growth, Not Just Speed</p></div><p>Newly reprocessed historical data—timing accuracy not independently validated.</p><span>MOSES LAKE BMX · ON-DEMAND TRACK CONNECTION</span></footer>
+<noscript><div class="noscript">Enable JavaScript to use alias/date selection and view runs. Newly reprocessed historical data—timing accuracy not independently validated.</div></noscript>
+</body></html>
