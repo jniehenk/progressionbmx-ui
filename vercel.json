@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/MLBMX.html",
+      "destination": "/track.html"
+    },
+    {
       "source": "/register",
       "destination": "/registration.html"
     },
@@ -31,6 +35,13 @@
           "value": "nosniff"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/track.html",
+      "destination": "/MLBMX.html",
+      "permanent": true
     }
   ]
 }
