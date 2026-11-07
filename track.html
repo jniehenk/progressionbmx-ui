@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Progression BMX · Choose your rider</title><link rel="stylesheet" href="/rider-assets/styles.css"><script src="/rider-assets/public-context.js" defer></script><script src="/rider-assets/entry.js" defer></script><link rel="stylesheet" href="/rider-assets/track-entry.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Progression BMX · Choose your rider</title><link rel="stylesheet" href="/rider-assets/styles.css"><script src="/rider-assets/public-context.js" defer></script><script src="/rider-assets/entry.js" defer></script><link rel="stylesheet" href="/rider-assets/track-entry.css"><script src="/rider-assets/chip-availability.js" defer></script><link rel="stylesheet" href="/rider-assets/chip-lookup.css"></head>
 <body>
 <header class="topbar"><div class="header-inner"><a class="brand" href="/" aria-label="Progression BMX home"><img class="brand-wide" src="/rider-assets/brand/wide-logo.png" width="1185" height="488" alt="Progression BMX Timing — Built for Growth, Not Just Speed"><img class="brand-compact" src="/rider-assets/brand/mark.png" width="1536" height="1536" alt=""><span class="brand-name compact-name">Progression BMX<span class="brand-sub">Timing</span></span></a><span class="historical"><span></span> HISTORICAL / NOT LIVE</span></div></header>
 <main id="entryPage">
   <a id="newRider" class="registration-entry" href="/register"><img src="/rider-assets/brand/new-rider.svg" width="96" height="96" alt=""><span><strong>New riders register here</strong><small>Open the separate rider registration page</small></span><span class="registration-arrow" aria-hidden="true">→</span></a>
+  <section id="chipLookup" class="workspace"><h2>Find timing results by chip number</h2><p>No login or registration required. Timing history follows the chip, not a claim about who rode it.</p><form action="/tracks/moses-lake-bmx/rider"><label for="lookupChip">Printed chip number</label><input disabled id="lookupChip" name="chip" maxlength="128" required autocomplete="off"><button id="chipLookupSubmit" type="submit" disabled>View results</button></form></section>
   <section class="rider-entry" aria-labelledby="directoryTitle">
     <div class="section-heading"><div><p class="eyebrow">RIDER DIRECTORY</p><h2 id="directoryTitle">Choose your rider</h2></div></div>
 

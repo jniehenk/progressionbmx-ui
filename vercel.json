@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/chip-results",
+      "destination": "/track-rider.html"
+    },
+    {
+      "source": "/register/outcome/:reference",
+      "destination": "/registration.html"
+    },
+    {
       "source": "/MLBMX.html",
       "destination": "/track.html"
     },

@@ -3,10 +3,11 @@ const $ = id => document.getElementById(id);
 let dataset = null;
 let loading=false;
 const publicMode=typeof window!=='undefined'&&Boolean(window.PBMX_PUBLIC_RIDER);
+const publicChip=typeof location!=='undefined'?new URLSearchParams(location.search).get('chip'):null;
 const publicProfile=publicMode?new URLSearchParams(location.search).get('profile'):null;
 const trackBase=typeof location!=='undefined'?(location.pathname.match(/^\/tracks\/[^/]+/)?.[0]||''):'';
 const chipReference=typeof location!=='undefined'?location.pathname.match(/^\/register\/results\/([a-f0-9]{32})$/)?.[1]:null;
-function endpoint(path){if(publicMode&&path==='/api/runs')return '/api/track?resource=runs&limit=100&profile='+encodeURIComponent(publicProfile||'');return chipReference&&path==='/api/runs'?'/api/v1/enrollments/'+chipReference+'/results':trackBase+path;}
+function endpoint(path){if(publicChip&&path==='/api/runs')return (publicMode?'/api/track?resource=chip-results&limit=100&chip=':'/public/chip-results?chip=')+encodeURIComponent(publicChip);if(publicMode&&path==='/api/runs')return '/api/track?resource=runs&limit=100&profile='+encodeURIComponent(publicProfile||'');return chipReference&&path==='/api/runs'?'/api/v1/enrollments/'+chipReference+'/results':trackBase+path;}
 function freshness(text){let p=document.getElementById('syncFreshness');if(!p){p=node('p','sync-freshness');p.id='syncFreshness';p.setAttribute('role','status');$('count').parentNode.after(p);}p.textContent=text;}
 
 const classes = {FULL_LAP:'Full lap', HALF_TRACK:'Half-track', RHYTHM:'Rhythm', OTHER:'Other'};
@@ -138,7 +139,7 @@ async function load(quiet=false,more=false) {
     if(quiet){previous.rider=$('rider').value;previous.date=$('date').value;}
     dataset = next;
     if(publicMode){document.querySelector('.hero h1').textContent=next.profile.name;const notice=document.querySelector('.notice strong');if(notice)notice.textContent=next.notice;document.querySelector('footer > p').textContent=next.notice;$('scope').textContent=next.dataset_label;const loadMore=$('loadMore');if(loadMore)loadMore.hidden=dataset.runs.length>=dataset.total;}
-    if(chipReference){document.querySelector('footer > p').textContent=next.notice;document.querySelector('.hero .eyebrow').textContent='YOUR CHIP TIMING HISTORY';document.querySelector('.hero-count span').textContent='All available dates';const notice=document.querySelector('.notice strong');if(notice)notice.textContent=next.notice;document.querySelector('.historical').textContent='LOCAL TEST / CHIP HISTORY';document.querySelector('.hero h1').textContent='Your chip timing history';document.querySelector('.intro').textContent='All available dates for '+next.chip_identity+'. History follows this chip.';$('scope').textContent=next.dataset_label;document.querySelector('.back-to-riders').textContent='← Back to registration';}
+    if(chipReference||publicChip){if(publicChip){const card=document.querySelectorAll('.guide > div')[2];if(card){card.querySelector('h3').textContent='Timing follows the chip';card.querySelector('p').textContent='Anyone with this chip number may view timing only. It does not identify who rode historical runs or grant access to private rider profiles.';}}document.querySelector('footer > p').textContent=next.notice;document.querySelector('.hero .eyebrow').textContent='YOUR CHIP TIMING HISTORY';document.querySelector('.hero-count span').textContent='All available dates';const notice=document.querySelector('.notice strong');if(notice)notice.textContent=next.notice;document.querySelector('.historical').textContent='LOCAL TEST / CHIP HISTORY';document.querySelector('.hero h1').textContent='Your chip timing history';document.querySelector('.intro').textContent='All available dates for '+next.chip_identity+'. History follows this chip.';$('scope').textContent=next.dataset_label;document.querySelector('.back-to-riders').textContent=publicChip?'← Back to chip lookup':'← Back to registration';}
 
     dataset.runs=dataset.runs.map(localRun);
     dataset.dates=Array.from(new Set(dataset.runs.map(r=>r.day).filter(Boolean))).sort().reverse();
