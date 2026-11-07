@@ -109,7 +109,7 @@ def forward(method,url,body,headers,env=None,opener=None,response_headers=None):
                 fields={'name','dob','rider_class','home_track_id','handle','usabmx_number','email','phone','guardian_name','home_track_suggestion','mode','chip','registration_track_id'}
                 if isinstance(error,str) and error.startswith('FIELD:') and error.split(':')[1] in fields:
                     e.close();return code,{'error':'FIELD:'+error.split(':')[1]+':Please check this field.'},correlation
-                allowed={'TAG_ASSIGNMENT_CONFLICT','COMPLETE_PATTERN_REQUIRED','CONFIRM_VERIFIED_CHIP_FIRST','REGISTRATION_SESSION_REQUIRED','REGISTRATION_SESSION_EXPIRED','REGISTRATION_CSRF_REQUIRED','REGISTRATION_UNAVAILABLE','DETAILS_CHANGED_REFRESH','DETAILS_LOCKED_DURING_VERIFICATION','PREVIOUS_VERIFICATION_STILL_ACTIVE','VERIFY_TRANSPONDER_FIRST','REGISTRATION_SAVE_INCOMPLETE','REGISTRATION_ALREADY_SCOPED'}
+                allowed={'CAPTURE_UNAVAILABLE','TAG_ASSIGNMENT_CONFLICT','COMPLETE_PATTERN_REQUIRED','CONFIRM_VERIFIED_CHIP_FIRST','REGISTRATION_SESSION_REQUIRED','REGISTRATION_SESSION_EXPIRED','REGISTRATION_CSRF_REQUIRED','REGISTRATION_UNAVAILABLE','DETAILS_CHANGED_REFRESH','DETAILS_LOCKED_DURING_VERIFICATION','PREVIOUS_VERIFICATION_STILL_ACTIVE','VERIFY_TRANSPONDER_FIRST','REGISTRATION_SAVE_INCOMPLETE','REGISTRATION_ALREADY_SCOPED'}
                 if error in allowed:e.close();return code,{'error':error},correlation
             except (ValueError,TypeError,AttributeError):pass
         category=rejection_category(e) if code in (401,403) else 'HTTP_REJECTION'
